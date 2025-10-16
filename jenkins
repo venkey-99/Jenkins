@@ -1,25 +1,49 @@
 pipeline {
     agent any
+
+    tools {
+        maven 'Maven3'    // Must match the name in Jenkins "Global Tool Configuration"
+        jdk 'JDK17'       // Same for JDK — use whatever version you configured
+    }
+
     stages {
         stage('Clone') {
             steps {
-                git 'https://github.com/venkey-99/Jenkins.git'
+                echo 'Cloning the repository...'
+                git branch: 'main', url: 'https://github.com/venkey-99/Jenkins.git'
             }
         }
+
         stage('Build') {
             steps {
-                sh 'Building the project...'
+                echo 'Building the project...'
+                sh 'mvn clean package -DskipTests'
             }
         }
+
         stage('Test') {
             steps {
-                sh 'Running tests...'
+                echo 'Running tests...'
+                sh 'mvn test'
             }
         }
+
         stage('Deploy') {
             steps {
-                sh 'Deploying...'
+                echo 'Deploying the application...'
+                // Example deployment simulation
+                sh 'echo "Deploying build artifacts to target server..."'
             }
         }
     }
+
+    post {
+        success {
+            echo '✅ Build and Deployment completed successfully!'
+        }
+        failure {
+            echo '❌ Build failed. Please check the logs.'
+        }
+    }
 }
+
